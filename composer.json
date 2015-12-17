@@ -1,0 +1,11 @@
+{
+    "name": "bac/wordpress-image-download",
+    "description": "Class to help create a WordPress attachment from a URL.",
+    "authors": [
+        {
+            "name": "Chris Herbert",
+            "email": "herbert@bermanco.com"
+        }
+    ],
+    "require": {}
+}
