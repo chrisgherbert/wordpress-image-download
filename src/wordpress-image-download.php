@@ -1,6 +1,6 @@
 <?php
 
-namespace bermanco\WordPressImageDownload;
+namespace bermanco\WordpressImageDownload;
 
 class WordPressImageDownload {
 
