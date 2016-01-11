@@ -2,7 +2,7 @@
 
 namespace bermanco\WordpressImageDownload;
 
-class WordPressImageDownload {
+class WordpressImageDownload {
 
 	public $external_url;
 
