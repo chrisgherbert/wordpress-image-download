@@ -1,5 +1,5 @@
 {
-	"name": "bac/wordpress-image-download",
+	"name": "bermanco/wordpress-image-download",
 	"description": "Class to help create a WordPress attachment from a URL.",
 	"authors": [
 		{
