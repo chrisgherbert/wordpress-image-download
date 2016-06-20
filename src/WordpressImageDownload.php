@@ -31,8 +31,7 @@ class WordpressImageDownload {
 
 			// Check for download errors
 			if ( is_wp_error( $tmp ) ) {
-				@unlink( $file_array[ 'tmp_name' ] );
-				return $tmp;
+				return $tmp->get_error_message();
 			}
 
 			$id = media_handle_sideload( $file_array, 0 );
