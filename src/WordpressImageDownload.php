@@ -40,12 +40,12 @@ class WordpressImageDownload {
 		}
 
 		// Create the image file on the server
-		file_put_contents($file, $image_data);
+		$attachment = wp_upload_bits($filename, null, $image_data);
 
 		$wp_filetype = wp_check_filetype($filename, null);
 
 		// Set attachment data
-		$attachment = array(
+		$post_info = array(
 			'post_mime_type' => $wp_filetype['type'],
 			'post_title' => sanitize_file_name($filename),
 			'post_content' => '',
@@ -53,7 +53,14 @@ class WordpressImageDownload {
 		);
 
 		// Create the attachment
-		$attach_id = wp_insert_attachment($attachment, $file);
+		$attach_id = wp_insert_attachment($post_info, $file);
+
+		// Set metadata and create thumbnails
+		if( !function_exists( 'wp_generate_attachment_data' ) )
+				require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+
+		$attach_data = wp_generate_attachment_metadata($attach_id, $file);
+		wp_update_attachment_metadata($attach_id,  $attach_data);
 
 		return $attach_id;
 
