@@ -27,20 +27,16 @@ class WordpressImageDownload {
 	public function create_media_attachment(){
 
 		$image_name = basename($this->external_url);
-		$upload_dir = wp_upload_dir();
 		$image_data = $this->get_image_data($this->external_url);
-		$unique_file_name = wp_unique_filename($upload_dir['path'], $image_name);
-		$filename = basename($unique_file_name);
-
-		// Check folder permission and define file location
-		if( wp_mkdir_p( $upload_dir['path'] ) ) {
-			$file = $upload_dir['path'] . '/' . $filename;
-		} else {
-			$file = $upload_dir['basedir'] . '/' . $filename;
-		}
 
 		// Create the image file on the server
-		$attachment = wp_upload_bits($filename, null, $image_data);
+		$attachment = wp_upload_bits($image_name, null, $image_data);
+		// Return if errors
+		if (!empty($attachment['error'])) {
+			return false;
+		}
+		$filepath = $attachment['file'];
+		$filename = basename($attachment['file']);
 
 		$wp_filetype = wp_check_filetype($filename, null);
 
@@ -53,14 +49,14 @@ class WordpressImageDownload {
 		);
 
 		// Create the attachment
-		$attach_id = wp_insert_attachment($post_info, $file);
+		$attach_id = wp_insert_attachment($post_info, $filepath);
 
 		// Set metadata and create thumbnails
 		if( !function_exists( 'wp_generate_attachment_data' ) )
 				require_once(ABSPATH . "wp-admin" . '/includes/image.php');
 
-		$attach_data = wp_generate_attachment_metadata($attach_id, $file);
-		wp_update_attachment_metadata($attach_id,  $attach_data);
+		$attach_data = wp_generate_attachment_metadata($attach_id, $filepath);
+		wp_update_attachment_metadata($attach_id, $attach_data);
 
 		return $attach_id;
 
