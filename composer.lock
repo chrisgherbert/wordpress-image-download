@@ -4,21 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bc8404f0b07d1165c407ea75321a33b1",
-    "content-hash": "d414d2a301ef125eb091f5261a360651",
+    "content-hash": "f2ca971443bb8e621919e59472eb7239",
     "packages": [
         {
             "name": "php-curl-class/php-curl-class",
-            "version": "6.0.0",
+            "version": "7.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-curl-class/php-curl-class.git",
-                "reference": "2e08fc596acb5f9a15ae746dfedd6673134c8cad"
+                "reference": "66d0afcb48e652960df90bc0864c38ce89b10782"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/2e08fc596acb5f9a15ae746dfedd6673134c8cad",
-                "reference": "2e08fc596acb5f9a15ae746dfedd6673134c8cad",
+                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/66d0afcb48e652960df90bc0864c38ce89b10782",
+                "reference": "66d0afcb48e652960df90bc0864c38ce89b10782",
                 "shasum": ""
             },
             "require": {
@@ -26,7 +25,8 @@
                 "php": ">=5.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "*"
+                "phpunit/phpunit": "*",
+                "squizlabs/php_codesniffer": "*"
             },
             "type": "library",
             "autoload": {
@@ -43,7 +43,7 @@
                     "name": "Zach Borboa"
                 }
             ],
-            "description": "PHP Curl Class is an object-oriented wrapper of the PHP cURL extension.",
+            "description": "PHP Curl Class makes it easy to send HTTP requests and integrate with web APIs.",
             "homepage": "https://github.com/php-curl-class/php-curl-class",
             "keywords": [
                 "api",
@@ -61,7 +61,7 @@
                 "web service",
                 "xml"
             ],
-            "time": "2016-09-03 00:18:01"
+            "time": "2017-05-01T08:11:43+00:00"
         }
     ],
     "packages-dev": [],
