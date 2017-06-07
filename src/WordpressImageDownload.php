@@ -27,14 +27,32 @@ class WordpressImageDownload {
 	public function create_media_attachment(){
 
 		$image_name = basename($this->external_url);
-		$image_data = $this->get_image_data($this->external_url);
 
-		// Create the image file on the server
-		$attachment = wp_upload_bits($image_name, null, $image_data);
-		// Return if errors
-		if (!empty($attachment['error'])) {
+		$image_data = wp_remote_get(
+			$this->external_url,
+			array(
+				'timeout' => 10
+			)
+		);
+
+		if (is_wp_error($image_data)){
+			error_log(print_r($image_data->get_error_messages(), true));
 			return false;
 		}
+
+		$file_extension = self::get_file_extension_from_mimetype($image_data['headers']['content-type']);
+
+		$full_file_name = $image_name . '.' . $file_extension;
+
+		// Create the image file on the server
+		$attachment = wp_upload_bits($full_file_name, null, wp_remote_retrieve_body($image_data));
+
+		// Return if errors
+		if (!empty($attachment['error'])) {
+			error_log(print_r($attachment['error'], true));
+			return false;
+		}
+
 		$filepath = $attachment['file'];
 		$filename = basename($attachment['file']);
 
@@ -52,8 +70,9 @@ class WordpressImageDownload {
 		$attach_id = wp_insert_attachment($post_info, $filepath);
 
 		// Set metadata and create thumbnails
-		if( !function_exists( 'wp_generate_attachment_data' ) )
-				require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+		if( !function_exists( 'wp_generate_attachment_data' ) ){
+			require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+		}
 
 		$attach_data = wp_generate_attachment_metadata($attach_id, $filepath);
 		wp_update_attachment_metadata($attach_id, $attach_data);
@@ -65,6 +84,16 @@ class WordpressImageDownload {
 	///////////////
 	// Protected //
 	///////////////
+
+	public static function get_file_extension_from_mimetype($mimetype){
+
+		$extensions = self::get_mime_types();
+
+		if (isset($extensions[$mimetype])){
+			return $extensions[$mimetype];
+		}
+
+	}
 
 	protected function get_image_data($image_url){
 
@@ -81,5 +110,20 @@ class WordpressImageDownload {
 		return $response;
 
 	}
+
+	public static function get_mime_types(){
+
+		return array(
+			"image/bmp" => "bmp",
+			"image/jpeg" => "jpg",
+			"image/pict" => "pic",
+			"image/png" => "png",
+			"image/tiff" => "tiff",
+			"image/gif" => "gif",
+			"image/svg+xml" => "svg",
+		);
+
+	}
+
 
 }
