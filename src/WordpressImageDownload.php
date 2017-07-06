@@ -42,7 +42,8 @@ class WordpressImageDownload {
 
 		$file_extension = self::get_file_extension_from_mimetype($image_data['headers']['content-type']);
 
-		$full_file_name = $image_name . '.' . $file_extension;
+		// We need to optionally add a valid file extension - Wordpress checks for a valid file using the extension only.
+		$full_file_name = rtrim($image_name, '.' . $file_extension) . '.' . $file_extension;
 
 		// Create the image file on the server
 		$attachment = wp_upload_bits($full_file_name, null, wp_remote_retrieve_body($image_data));
