@@ -15,7 +15,7 @@ class WordpressImageDownload {
 			$this->external_url = $url;
 		}
 		else {
-			error_log('Invalid URL passed to WordPressImageDownload constructor');
+			error_log('Invalid URL passed to WordPressImageDownload constructor: ' . $url);
 		}
 
 	}
@@ -26,34 +26,18 @@ class WordpressImageDownload {
 
 	public function create_media_attachment(){
 
+		$image_title = str_replace('%20', ' ', $this->external_url);
+		$image_title = pathinfo($image_title, PATHINFO_FILENAME);
+
 		$image_name = basename($this->external_url);
-
-		$image_data = wp_remote_get(
-			$this->external_url,
-			array(
-				'timeout' => 10
-			)
-		);
-
-		if (is_wp_error($image_data)){
-			error_log(print_r($image_data->get_error_messages(), true));
-			return false;
-		}
-
-		$file_extension = self::get_file_extension_from_mimetype($image_data['headers']['content-type']);
-
-		// We need to optionally add a valid file extension - Wordpress checks for a valid file using the extension only.
-		$full_file_name = rtrim($image_name, '.' . $file_extension) . '.' . $file_extension;
+		$image_data = $this->get_image_data($this->external_url);
 
 		// Create the image file on the server
-		$attachment = wp_upload_bits($full_file_name, null, wp_remote_retrieve_body($image_data));
-
+		$attachment = wp_upload_bits($image_name, null, $image_data);
 		// Return if errors
 		if (!empty($attachment['error'])) {
-			error_log(print_r($attachment['error'], true));
 			return false;
 		}
-
 		$filepath = $attachment['file'];
 		$filename = basename($attachment['file']);
 
@@ -62,7 +46,7 @@ class WordpressImageDownload {
 		// Set attachment data
 		$post_info = array(
 			'post_mime_type' => $wp_filetype['type'],
-			'post_title' => sanitize_file_name($filename),
+			'post_title' => $image_title,
 			'post_content' => '',
 			'post_status' => 'inherit'
 		);
@@ -71,9 +55,8 @@ class WordpressImageDownload {
 		$attach_id = wp_insert_attachment($post_info, $filepath);
 
 		// Set metadata and create thumbnails
-		if( !function_exists( 'wp_generate_attachment_data' ) ){
-			require_once(ABSPATH . "wp-admin" . '/includes/image.php');
-		}
+		if( !function_exists( 'wp_generate_attachment_data' ) )
+				require_once(ABSPATH . "wp-admin" . '/includes/image.php');
 
 		$attach_data = wp_generate_attachment_metadata($attach_id, $filepath);
 		wp_update_attachment_metadata($attach_id, $attach_data);
@@ -81,6 +64,29 @@ class WordpressImageDownload {
 		return $attach_id;
 
 	}
+
+	///////////////
+	// Protected //
+	///////////////
+
+	protected function get_image_data($image_url){
+
+		$curl = new Curl;
+
+		$curl->setOpt(CURLOPT_FOLLOWLOCATION, true); // typically you will want to follow redirects
+
+		if ($this->user_agent){
+			$curl->setUserAgent($this->user_agent); // the default WordPress user agent may be rejected by certain servers
+		}
+
+		$response = $curl->get($image_url);
+
+		return $response;
+
+	}
+
+}
+
 
 	///////////////
 	// Protected //
