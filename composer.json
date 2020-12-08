@@ -1,10 +1,10 @@
 {
-	"name": "bermanco/wordpress-image-download",
+	"name": "chrisgherbert/wordpress-image-download",
 	"description": "Class to help create a WordPress attachment from a URL.",
 	"authors": [
 		{
 			"name": "Chris Herbert",
-			"email": "herbert@bermanco.com"
+			"email": "chris@chrisgherbert.com"
 		}
 	],
 	"require": {
@@ -12,7 +12,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"bermanco\\WordpressImageDownload\\": "src/"
+			"chrisgherbert\\WordpressImageDownload\\": "src/"
 		}
 	}
 }
