@@ -1,6 +1,6 @@
 <?php
 
-namespace bermanco\WordpressImageDownload;
+namespace chrisgherbert\WordpressImageDownload;
 
 use Curl\Curl;
 
