@@ -32,9 +32,13 @@ class WordpressImageDownload {
 		$image_name = basename($this->external_url);
 		$image_data = $this->get_image_data($this->external_url);
 
+		if (!$image_data){
+			return false;
+		}
+
 		// Create the image file on the server
 		$attachment = wp_upload_bits($image_name, null, $image_data);
-		// Return if errors
+		// Return false if errors
 		if (!empty($attachment['error'])) {
 			return false;
 		}
@@ -80,6 +84,11 @@ class WordpressImageDownload {
 		}
 
 		$response = $curl->get($image_url);
+
+		// Make sure there's actually image data
+		if (!$response){
+			return false;
+		}
 
 		return $response;
 
